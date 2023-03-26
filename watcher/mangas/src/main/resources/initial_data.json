@@ -1,0 +1,30 @@
+[
+  {
+    "_id": {
+      "$oid": "6378d2b9bbb9a042d82f9dbb"
+    },
+    "_class": "fr.gtandu.document.Manga",
+    "name": "One Piece",
+    "description": "Gol D. Roger, a man referred to as the \"Pirate King,\" is set to be executed by the World Government. But just before his demise, he confirms the existence of a great treasure, One Piece, located somewhere within the vast ocean known as the Grand Line. Announcing that One Piece can be claimed by anyone worthy enough to reach it, the Pirate King is executed and the Great Age of Pirates begins.  \n  \nTwenty-two years later, a young man by the name of Monkey D. Luffy is ready to embark on his own adventure, searching for One Piece and striving to become the new Pirate King. Armed with just a straw hat, a small boat, and an elastic body, he sets out on a fantastic journey to gather his own crew and a worthy ship that will take them across the Grand Line to claim the greatest status on the high seas.\n\n---\n\n**Note:**  \n**Because a takedown notice was sent to MangaDex from the owners of this series, One Piece is currently unavailable to be viewed. The series can be read in its entirety at [the official Shonen Jump website,](https://www.viz.com/shonenjump/chapters/one-piece) with the first and latest three chapters available at any time and the rest accessible with a Shonen Jump membership (which costs about $2 a month and can be accessed via a VPN if you are outside the US). The three most recent chapters can also be read on MangaPlus for free by clicking the chapter links below.**",
+    "releasedDate": 1997,
+    "coverPictureUrl": "https://uploads.mangadex.org/covers/a1c7c817-4e59-43b7-9365-09675a149a6f/1dcc8e3c-0504-46f9-8588-e248e98250a1.jpg",
+    "rate": 0,
+    "review": "",
+    "state": "ongoing",
+    "readingSource": ""
+  },
+  {
+    "_id": {
+      "$oid": "6378d3c9bbb9a042d82f9dbc"
+    },
+    "_class": "fr.gtandu.document.Manga",
+    "name": "One Punch-Man",
+    "description": "After rigorously training for three years, the ordinary Saitama has gained immense strength which allows him to take out anyone and anything with just one punch. He decides to put his new skill to good use by becoming a hero. However, he quickly becomes bored with easily defeating monsters, and wants someone to give him a challenge to bring back the spark of being a hero.  \n  \nUpon bearing witness to Saitama's amazing power, Genos, a cyborg, is determined to become Saitama's apprentice. During this time, Saitama realizes he is neither getting the recognition that he deserves nor known by the people due to him not being a part of the Hero Association. Wanting to boost his reputation, Saitama decides to have Genos register with him, in exchange for taking him in as a pupil. Together, the two begin working their way up toward becoming true heroes, hoping to find strong enemies and earn respect in the process.  \n  \n\n\n\n---\n\n**Notes:**  \n- Because some groups use the web version of the manga while others use the magazine version, the numbering won't match between different languages.  \n- **Because a takedown notice was sent to MangaDex from the owners of this series, One Punch Man is currently unavailable to be viewed. The series can be read in its entirety at [the official Shonen Jump website,](https://www.viz.com/shonenjump/chapters/one-punch-man) with the first and latest three chapters available at any time and the rest accessible with a Shonen Jump membership (which costs about $2 a month and can be accessed via a VPN if you are outside the US).**",
+    "releasedDate": 2012,
+    "coverPictureUrl": "https://uploads.mangadex.org/covers/d8a959f7-648e-4c8d-8f23-f1f3f8e129f3/64200838-9fce-4f95-aeff-6afe467a738e.jpg",
+    "rate": 0,
+    "review": "",
+    "state": "ongoing",
+    "readingSource": ""
+  }
+]

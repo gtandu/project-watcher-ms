@@ -1,0 +1,31 @@
+version: '3'
+services:
+  project-watcher-eureka:
+    image: dylams/project-watcher-eureka
+    build: .
+    ports:
+      - "8761:8761"
+    restart: always
+  project-watcher-mangas:
+    image: dylams/project-watcher-mangas
+    build: .
+    ports:
+      - "7001:7001"
+    restart: always
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka/
+      - spring.data.mongodb.uri=mongodb://admin:pwd@host.docker.internal:27017/watcher?authSource=admin&authMechanism=SCRAM-SHA-1
+    depends_on:
+      - mongo
+      - project-watcher-eureka
+  mongo:
+    container_name: mongodb
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pwd
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: always
+    ports:
+      - "27017:27017"

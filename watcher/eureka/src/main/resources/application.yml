@@ -1,0 +1,12 @@
+server:
+  port: 8761 # Le port sur lequel Eureka va écouter
+
+eureka:
+  client:
+    registerWithEureka: false # ne pas s'enregistrer avec le service Eureka
+    fetchRegistry: false # pas de cache local du registry
+  server:
+    enableSelfPreservation: false
+    waitTimeInMsWhenSyncEmpty: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761

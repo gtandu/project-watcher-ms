@@ -1,0 +1,24 @@
+server:
+  port: 8888
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:gtandu/project-watcher-config.git
+          clone-on-start: true
+          default-label: master
+          private-key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDpYLsCJ+zBE1lQFZ6aEPVnm2msj8gx+RfLiU9CWVQ6 tbrandon91@hotmail.fr
+  security:
+    user:
+      name: root
+      password: pwdtest
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
