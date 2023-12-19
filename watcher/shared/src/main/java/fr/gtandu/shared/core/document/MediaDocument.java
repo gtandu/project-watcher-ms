@@ -1,14 +1,11 @@
 package fr.gtandu.shared.core.document;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.time.LocalDate;
 
 @Data
 @SuperBuilder
