@@ -1,18 +1,20 @@
 server:
   port: 8888
 spring:
+  application:
+    name: config-service
   cloud:
     config:
       server:
         git:
-          uri: git@github.com:gtandu/project-watcher-config.git
+          uri: ${GIT_URI}
           clone-on-start: true
           default-label: master
-          private-key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDpYLsCJ+zBE1lQFZ6aEPVnm2msj8gx+RfLiU9CWVQ6 tbrandon91@hotmail.fr
+          private-key: ${GIT_PRIVATE_KEY}
   security:
     user:
-      name: root
-      password: pwdtest
+      name: ${SPRING_SECURITY_USER_NAME}
+      password: ${SPRING_SECURITY_USER_PASSWORD}
 eureka:
   instance:
     preferIpAddress: true

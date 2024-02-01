@@ -5,7 +5,11 @@ import fr.gtandu.shared.core.dto.MangaDto;
 import fr.gtandu.shared.core.service.MangaApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -14,7 +18,7 @@ import reactor.core.publisher.Mono;
 @RestController()
 @RefreshScope
 @Slf4j
-@RequestMapping("/mangas")
+@RequestMapping("/api/v1/mangas")
 public class MangaController implements MangaApi {
 
     private final MangaService mangaService;
@@ -28,8 +32,8 @@ public class MangaController implements MangaApi {
         return ResponseEntity.ok(mangaService.getMangaById(mangaId));
     }
 
-    @Override
-    public ResponseEntity<Flux<MangaDto>> getAll() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Flux<MangaDto>> getAll(@AuthenticationPrincipal Jwt principal) {
         return ResponseEntity.ok(mangaService.getAll());
     }
 

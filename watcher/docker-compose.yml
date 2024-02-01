@@ -1,23 +1,5 @@
 version: '3'
 services:
-  project-watcher-eureka:
-    image: dylams/project-watcher-eureka
-    build: .
-    ports:
-      - "8761:8761"
-    restart: always
-  project-watcher-mangas:
-    image: dylams/project-watcher-mangas
-    build: .
-    ports:
-      - "7001:7001"
-    restart: always
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka/
-      - spring.data.mongodb.uri=mongodb://admin:pwd@host.docker.internal:27017/watcher?authSource=admin&authMechanism=SCRAM-SHA-1
-    depends_on:
-      - mongo
-      - project-watcher-eureka
   mongo:
     container_name: mongodb
     image: mongo
@@ -29,3 +11,67 @@ services:
     restart: always
     ports:
       - "27017:27017"
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    volumes:
+      - ./imports:/opt/keycloak/data/import/realm.json
+    environment:
+      #KEYCLOAK_IMPORT: /opt/jboss/keycloak/imports/realm-export.json -Dkeycloak.profile.feature.upload_scripts=enabled
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: Pa55w0rd
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    command:
+      - start-dev
+      #- --import-realm
+    ports:
+      - 8081:8080
+    depends_on:
+      - postgres
+  project-watcher-config:
+    container_name: project-watcher-config
+    image: dylams/project-watcher-config
+    build: .
+    ports:
+      - "8888:8888"
+    restart: always
+  project-watcher-eureka:
+    container_name: project-watcher-eureka
+    image: dylams/project-watcher-eureka
+    build: .
+    ports:
+      - "8761:8761"
+    restart: always
+    depends_on:
+      - mongo
+      - project-watcher-config
+  project-watcher-mangas:
+    container_name: project-watcher-mangas
+    image: dylams/project-watcher-mangas
+    build: .
+    ports:
+      - "7001:7001"
+    restart: always
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka/
+      - spring.data.mongodb.uri=mongodb://admin:pwd@host.docker.internal:27017/watcher?authSource=admin&authMechanism=SCRAM-SHA-1
+    depends_on:
+      - mongo
+      - project-watcher-config
+      - project-watcher-eureka
+volumes:
+  postgres_data:
