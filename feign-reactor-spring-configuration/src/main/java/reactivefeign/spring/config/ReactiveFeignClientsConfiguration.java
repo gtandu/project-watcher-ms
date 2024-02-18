@@ -85,6 +85,7 @@ public class ReactiveFeignClientsConfiguration {
 	}
 
 	@Bean
+	@Primary
 	public FormattingConversionService feignConversionService() {
 		FormattingConversionService conversionService = new DefaultFormattingConversionService();
 		for (FeignFormatterRegistrar feignFormatterRegistrar : feignFormatterRegistrars) {
