@@ -1,6 +1,9 @@
 server:
   port: 8762
 spring:
+  devtools:
+    livereload:
+      port: 35762
   application:
     name: gateway
   profiles:
@@ -14,11 +17,19 @@ spring:
 
   cloud:
     gateway:
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
       default-filters:
         - TokenRelay
       routes:
         - id: mangas-service
           uri: lb://MANGAS-SERVICE
+          predicates:
+            - Path=/api/v1/**
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/api/v1/**
     config:

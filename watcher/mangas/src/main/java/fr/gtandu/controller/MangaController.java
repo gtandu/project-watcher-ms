@@ -2,16 +2,17 @@ package fr.gtandu.controller;
 
 import fr.gtandu.service.MangaService;
 import fr.gtandu.shared.core.dto.MangaDto;
+import fr.gtandu.shared.core.dto.ReadingMediaDto;
+import fr.gtandu.shared.core.dto.ReadingMediaDtoWithJwt;
 import fr.gtandu.shared.core.service.MangaApi;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,6 +41,18 @@ public class MangaController implements MangaApi {
     @Override
     public ResponseEntity<Mono<MangaDto>> createManga(MangaDto mangaDto) {
         return ResponseEntity.ok(mangaService.createManga(mangaDto));
+    }
+
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<Void>> addMediaToReadingList(@AuthenticationPrincipal Jwt principal, @RequestBody ReadingMediaDto readingMediaDto) {
+        if (StringUtils.isEmpty(readingMediaDto.getMediaDocument().getId())) {
+            return ResponseEntity.ok(mangaService
+                    .createManga((MangaDto) readingMediaDto.getMediaDocument())
+                    .and(userServiceClient.addMediaToReadingList(new ReadingMediaDtoWithJwt(principal, readingMediaDto))));
+        } else {
+            return ResponseEntity.ok(userServiceClient.addMediaToReadingList(new ReadingMediaDtoWithJwt(principal, readingMediaDto)).then());
+        }
+
     }
 
     @Override

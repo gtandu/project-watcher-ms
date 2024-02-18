@@ -11,9 +11,6 @@ public interface MangaApi {
     @GetMapping(value = "/{mangaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Mono<MangaDto>> getMangaById(@PathVariable String mangaId);
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Mono<MangaDto>> createManga(@RequestBody MangaDto mangaDto);
-
     @PutMapping(value = "/{mangaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Mono<MangaDto>> updateManga(@PathVariable String mangaId, @RequestBody MangaDto mangaDto);
 
