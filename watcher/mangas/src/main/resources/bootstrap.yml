@@ -1,0 +1,52 @@
+server.port: 7001
+spring:
+  devtools:
+    livereload:
+      port: 35701
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      auto-index-creation: true
+      uri: mongodb://localhost:27017/watcher
+  profiles:
+    active: development
+  application:
+    name: mangas-service
+  cloud:
+    config:
+      name: mangas-service
+      uri: http://localhost:8888
+      username: ${SPRING_CLOUD_CONFIG_USERNAME}
+      password: ${SPRING_CLOUD_CONFIG_PASSWORD}
+      fail-fast: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/project-watcher
+          jwk-set-uri: http://localhost:8081/realms/project-watcher/protocol/openid-connect/certs
+  reactor:
+    debug-agent:
+      enabled: true
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+logging:
+  file:
+    path: logs
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    fr.gtandu.client.user.UserServiceClient: TRACE
+user-service:
+  urls:
+    get-user-by-id-url: /{userId}
+    add-media-to-reading-list-url: /readingMedia

@@ -1,0 +1,29 @@
+server:
+  port: 8888
+spring:
+  devtools:
+    livereload:
+      port: 35888
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GIT_URI}
+          clone-on-start: true
+          default-label: master
+          private-key: ${GIT_PRIVATE_KEY}
+  security:
+    user:
+      name: ${SPRING_SECURITY_USER_NAME}
+      password: ${SPRING_SECURITY_USER_PASSWORD}
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
