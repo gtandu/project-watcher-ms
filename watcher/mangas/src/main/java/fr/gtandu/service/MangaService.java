@@ -1,38 +1,31 @@
 package fr.gtandu.service;
 
-import fr.gtandu.shared.core.dto.MangaDto;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import fr.gtandu.exception.MangaNotFoundException;
+import fr.gtandu.shared.core.media.dto.MangaDto;
+
+import java.util.List;
 
 public interface MangaService {
     /**
-     * @param mangaId
+     * @param mangaDto
      * @return
      */
-    Mono<MangaDto> getMangaById(String mangaId);
-
-    /**
-     * @return
-     */
-    Flux<MangaDto> getAll();
+    MangaDto createManga(MangaDto mangaDto);
 
     /**
      * @param mangaDto
      * @return
      */
-    Mono<MangaDto> createManga(@RequestBody MangaDto mangaDto);
-
-    /**
-     * @param mangaDto
-     * @return
-     */
-    Mono<MangaDto> updateManga(@RequestBody MangaDto mangaDto);
+    MangaDto updateManga(MangaDto mangaDto) throws MangaNotFoundException;
 
     /**
      * @param mangaId
      * @return
      */
-    Mono<Void> deleteMangaById(@PathVariable String mangaId);
+    boolean deleteMangaById(Long mangaId);
+
+    List<MangaDto> searchByName(String searchKey);
+
+    boolean existsById(Long id);
+
 }

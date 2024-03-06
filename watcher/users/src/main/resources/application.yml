@@ -1,14 +1,24 @@
 server.port: 7002
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/watcher
+    username: watcher
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
   devtools:
     livereload:
       port: 35702
   application:
     name: user-service
-  data:
-    mongodb:
-      auto-index-creation: true
-      uri: mongodb://localhost:27017/watcher
   profiles:
     active: development
   cloud:

@@ -1,26 +1,22 @@
 package fr.gtandu.controller;
 
 import fr.gtandu.service.MangaService;
-import fr.gtandu.shared.core.dto.MangaDto;
-import fr.gtandu.shared.core.dto.ReadingMediaDto;
-import fr.gtandu.shared.core.dto.ReadingMediaDtoWithJwt;
-import fr.gtandu.shared.core.service.MangaApi;
+import fr.gtandu.shared.core.media.dto.MangaDto;
+import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController()
 @RefreshScope
 @Slf4j
 @RequestMapping("/api/v1/mangas")
-public class MangaController implements MangaApi {
+public class MangaController {
 
     private final MangaService mangaService;
 
@@ -28,40 +24,28 @@ public class MangaController implements MangaApi {
         this.mangaService = mangaService;
     }
 
-    @Override
-    public ResponseEntity<Mono<MangaDto>> getMangaById(String mangaId) {
-        return ResponseEntity.ok(mangaService.getMangaById(mangaId));
+
+    @GetMapping("/{searchKey}")
+    public ResponseEntity<List<MangaDto>> searchByName(@PathVariable @NonNull @Min(3) String searchKey) {
+        return ResponseEntity.ok(mangaService.searchByName(searchKey));
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Flux<MangaDto>> getAll(@AuthenticationPrincipal Jwt principal) {
-        return ResponseEntity.ok(mangaService.getAll());
-    }
-
-    @Override
-    public ResponseEntity<Mono<MangaDto>> createManga(MangaDto mangaDto) {
+    @PutMapping
+    public ResponseEntity<MangaDto> createManga(@RequestBody MangaDto mangaDto) {
         return ResponseEntity.ok(mangaService.createManga(mangaDto));
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Mono<Void>> addMediaToReadingList(@AuthenticationPrincipal Jwt principal, @RequestBody ReadingMediaDto readingMediaDto) {
-        if (StringUtils.isEmpty(readingMediaDto.getMediaDocument().getId())) {
-            return ResponseEntity.ok(mangaService
-                    .createManga((MangaDto) readingMediaDto.getMediaDocument())
-                    .and(userServiceClient.addMediaToReadingList(new ReadingMediaDtoWithJwt(principal, readingMediaDto))));
+    @DeleteMapping(value = "/{mangaId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteMangaById(@PathVariable Long mangaId) {
+        if (mangaService.deleteMangaById(mangaId)) {
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(userServiceClient.addMediaToReadingList(new ReadingMediaDtoWithJwt(principal, readingMediaDto)).then());
+            return ResponseEntity.notFound().build();
         }
-
     }
 
-    @Override
-    public ResponseEntity<Mono<MangaDto>> updateManga(String mangaId, MangaDto mangaDto) {
-        return ResponseEntity.ok(mangaService.updateManga(mangaDto));
-    }
-
-    @Override
-    public ResponseEntity<Mono<Void>> deleteMangaById(String mangaId) {
-        return ResponseEntity.ok(mangaService.deleteMangaById(mangaId));
+    @GetMapping(value = "/existsById/{id}")
+    public ResponseEntity<Boolean> existsById(@PathVariable Long id) {
+        return ResponseEntity.ok(mangaService.existsById(id));
     }
 }

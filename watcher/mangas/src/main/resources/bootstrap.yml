@@ -1,11 +1,26 @@
 server.port: 7001
 spring:
+  #  sql:
+  #    init:
+  #      mode: always
+  #      schema-locations: classpath:/data.sql
+  #      continue-on-error: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/watcher
+    username: watcher
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  devtools:
+    livereload:
+      port: 35701
   main:
     allow-bean-definition-overriding: true
-  data:
-    mongodb:
-      auto-index-creation: true
-      uri: mongodb://localhost:27017/watcher
   profiles:
     active: development
   application:
@@ -39,3 +54,8 @@ logging:
     org.springframework.web: INFO
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
+    fr.gtandu.client.user.UserServiceClient: TRACE
+user-service:
+  urls:
+    get-user-by-id-url: /{userId}
+    add-media-to-reading-list-url: /readingMedia

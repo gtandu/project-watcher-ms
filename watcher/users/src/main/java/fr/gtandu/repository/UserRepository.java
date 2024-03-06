@@ -1,7 +1,7 @@
 package fr.gtandu.repository;
 
-import fr.gtandu.shared.core.document.UserDocument;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import fr.gtandu.shared.core.keycloak.entity.UserKeycloakEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends ReactiveMongoRepository<UserDocument, String> {
+public interface UserRepository extends JpaRepository<UserKeycloakEntity, String> {
 }

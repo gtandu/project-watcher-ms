@@ -1,15 +1,19 @@
 package fr.gtandu.service.impl;
 
-import fr.gtandu.mapper.MangaMapper;
+import fr.gtandu.exception.MangaNotFoundException;
 import fr.gtandu.repository.MangaRepository;
 import fr.gtandu.service.MangaService;
-import fr.gtandu.shared.core.dto.MangaDto;
+import fr.gtandu.shared.core.media.dto.MangaDto;
+import fr.gtandu.shared.core.media.mapper.MangaMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
+@Transactional
 public class MangaServiceImpl implements MangaService {
+
     private final MangaRepository mangaRepository;
     private final MangaMapper mangaMapper;
 
@@ -19,27 +23,42 @@ public class MangaServiceImpl implements MangaService {
     }
 
     @Override
-    public Mono<MangaDto> getMangaById(String mangaId) {
-        return mangaRepository.findById(mangaId).map(mangaMapper::toDto);
+    public MangaDto createManga(MangaDto mangaDto) {
+        return mangaMapper.toDto(mangaRepository.save(mangaMapper.toEntity(mangaDto)));
     }
 
     @Override
-    public Flux<MangaDto> getAll() {
-        return mangaRepository.findAll().map(mangaMapper::toDto);
+    public MangaDto updateManga(MangaDto mangaDto) throws MangaNotFoundException {
+        if (null != mangaDto && null != mangaDto.getId() && existsById(mangaDto.getId())) {
+            return mangaMapper.toDto(mangaRepository.save(mangaMapper.toEntity(mangaDto)));
+        }
+        throw new MangaNotFoundException();
     }
 
     @Override
-    public Mono<MangaDto> createManga(MangaDto mangaDto) {
-        return mangaRepository.save(mangaMapper.toDocument(mangaDto)).map(mangaMapper::toDto);
+    public boolean deleteMangaById(Long mangaId) {
+        if (null != mangaId) {
+            return mangaRepository.deleteByMangaId(mangaId) == 1;
+        } else {
+            return false;
+        }
     }
 
     @Override
-    public Mono<MangaDto> updateManga(MangaDto mangaDto) {
-        return mangaRepository.save(mangaMapper.toDocument(mangaDto)).map(mangaMapper::toDto);
+    public List<MangaDto> searchByName(String searchKey) {
+        // TODO
+        // Recherche en bdd
+        // Si moins de 5 resultats completer avec une recherche dans manga dex
+
+        List<MangaDto> mangaDtoList = mangaMapper.toDtoList(mangaRepository.findByNameStartingWith(searchKey));
+        if (mangaDtoList.size() <= 5) {
+            // Completer avec Manga Dex
+        }
+        return mangaDtoList;
     }
 
     @Override
-    public Mono<Void> deleteMangaById(String mangaId) {
-        return mangaRepository.deleteById(mangaId);
+    public boolean existsById(Long id) {
+        return mangaRepository.existsById(id);
     }
 }

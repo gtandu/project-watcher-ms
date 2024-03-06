@@ -13,8 +13,8 @@ spring:
           private-key: ${GIT_PRIVATE_KEY}
   security:
     user:
-      name: ${SPRING_SECURITY_USER_NAME}
-      password: ${SPRING_SECURITY_USER_PASSWORD}
+      name: ${SPRING_CLOUD_CONFIG_USERNAME}
+      password: ${SPRING_CLOUD_CONFIG_PASSWORD}
 eureka:
   instance:
     preferIpAddress: true
