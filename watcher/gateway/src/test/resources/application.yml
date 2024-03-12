@@ -1,0 +1,49 @@
+server:
+  port: 8762
+spring:
+  devtools:
+    livereload:
+      port: 35762
+  application:
+    name: gateway
+  profiles:
+    active: development
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/project-watcher
+          user-name-attribute: preferred_username
+
+  cloud:
+    gateway:
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+      default-filters:
+        - TokenRelay
+      routes:
+        - id: mangas-service
+          uri: lb://MANGAS-SERVICE
+          predicates:
+            - Path=/api/v1/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/**
+    config:
+      name: gateway-service
+      uri: http://localhost:8888
+      username: ${SPRING_CLOUD_CONFIG_USERNAME}
+      password: ${SPRING_CLOUD_CONFIG_PASSWORD}
+      fail-fast: false
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+

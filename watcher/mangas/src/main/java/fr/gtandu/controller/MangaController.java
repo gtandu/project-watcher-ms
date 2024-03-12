@@ -30,7 +30,7 @@ public class MangaController {
 
 
     @GetMapping("${watcher-api.manga.searchByName}")
-    public ResponseEntity<List<MangaDto>> searchByName(@PathVariable @NonNull @Min(3) String searchKey) {
+    public ResponseEntity<List<MangaDto>> searchByName(@PathVariable("searchKey") @NonNull @Min(3) String searchKey) {
         return ResponseEntity.ok(mangaService.searchByName(searchKey));
     }
 
@@ -51,7 +51,7 @@ public class MangaController {
     }
 
     @DeleteMapping(value = "${watcher-api.manga.deleteMangaById}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteMangaById(@PathVariable Long mangaId) {
+    public ResponseEntity<Void> deleteMangaById(@PathVariable("mangaId") Long mangaId) {
         if (mangaService.deleteMangaById(mangaId)) {
             return ResponseEntity.noContent().build();
         } else {
