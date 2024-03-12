@@ -1,7 +1,8 @@
 package fr.gtandu.service;
 
+import fr.gtandu.exception.MangaAlreadyExistException;
 import fr.gtandu.exception.MangaNotFoundException;
-import fr.gtandu.shared.core.media.dto.MangaDto;
+import fr.gtandu.media.dto.MangaDto;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface MangaService {
      * @param mangaDto
      * @return
      */
-    MangaDto createManga(MangaDto mangaDto);
+    MangaDto createManga(MangaDto mangaDto) throws MangaAlreadyExistException;
 
     /**
      * @param mangaDto

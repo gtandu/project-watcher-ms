@@ -1,3 +1,26 @@
+create table IF NOT EXISTS user_entity
+(
+    id                          varchar(36)           not null
+        constraint constraint_fb
+            primary key,
+    email                       varchar(255),
+    email_constraint            varchar(255),
+    email_verified              boolean default false not null,
+    enabled                     boolean default false not null,
+    federation_link             varchar(255),
+    first_name                  varchar(255),
+    last_name                   varchar(255),
+    realm_id                    varchar(255),
+    username                    varchar(255),
+    created_timestamp           bigint,
+    service_account_client_link varchar(255),
+    not_before                  integer default 0     not null,
+    constraint uk_dykn684sl8up1crfei6eckhd7
+        unique (realm_id, email_constraint),
+    constraint uk_ru8tt6t700s9v50bu18ws5ha6
+        unique (realm_id, username)
+);
+
 CREATE SEQUENCE IF NOT EXISTS medias_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE medias

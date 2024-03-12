@@ -1,7 +1,7 @@
 package fr.gtandu.repository;
 
 
-import fr.gtandu.shared.core.media.entity.MangaEntity;
+import fr.gtandu.media.entity.MangaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

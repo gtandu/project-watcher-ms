@@ -1,12 +1,13 @@
 package fr.gtandu.service.impl;
 
+import fr.gtandu.exception.MangaAlreadyExistException;
 import fr.gtandu.exception.MangaNotFoundException;
+import fr.gtandu.media.dto.MangaDto;
+import fr.gtandu.media.entity.MangaEntity;
+import fr.gtandu.media.mapper.MangaMapperImpl;
 import fr.gtandu.repository.MangaRepository;
-import fr.gtandu.shared.core.media.dto.MangaDto;
-import fr.gtandu.shared.core.media.entity.MangaEntity;
-import fr.gtandu.shared.core.media.mapper.MangaMapperImpl;
-import fr.gtandu.shared.core.test.MangaDtoMockUtils;
-import fr.gtandu.shared.core.test.MangaMockUtils;
+import fr.gtandu.utils.MangaDtoMockUtils;
+import fr.gtandu.utils.MangaMockUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +29,11 @@ class MangaServiceImplTest {
     @Spy
     private MangaMapperImpl mangaMapper;
     @InjectMocks
+    @Spy
     private MangaServiceImpl mangaService;
 
     @Test
-    void createMangaShouldSaveMangaAndReturnSavedDto() {
+    void createMangaShouldSaveMangaAndReturnSavedDto() throws MangaAlreadyExistException {
         // GIVEN
         MangaDto mockMangaDto = MangaDtoMockUtils.createMockMangaDto();
         MangaEntity savedMockMangaEntity = MangaMockUtils.createMockManga(mockMangaDto);
@@ -60,32 +62,36 @@ class MangaServiceImplTest {
     }
 
     @Test
-    void createMangaShouldThrowExceptionWhenMangaIsNull() {
+    void createMangaShouldThrowMangaAlreaydyEcistExceptionWhenMangaExistInDb() {
         // GIVEN
         MangaDto mockMangaDto = MangaDtoMockUtils.createMockMangaDto();
-        MangaEntity savedMockMangaEntity = MangaMockUtils.createMockManga(mockMangaDto);
 
-        doCallRealMethod().when(mangaMapper).toEntity(mockMangaDto);
-        doCallRealMethod().when(mangaMapper).toDto(any());
-        when(mangaRepository.save(any())).thenReturn(savedMockMangaEntity);
+        doReturn(true).when(mangaService).existsById(mockMangaDto.getId());
 
-        // WHEN
-        MangaDto mangaDto = mangaService.createManga(null);
-
+        // WHENs
         // THEN
-        assertThat(mangaDto).isNotNull();
-        assertThat(mangaDto.getId()).isEqualTo(savedMockMangaEntity.getId());
-        assertThat(mangaDto.getName()).isEqualTo(savedMockMangaEntity.getName());
-        assertThat(mangaDto.getRate()).isEqualTo(savedMockMangaEntity.getRate());
-        assertThat(mangaDto.getState()).isEqualTo(savedMockMangaEntity.getState());
-        assertThat(mangaDto.getDescription()).isEqualTo(savedMockMangaEntity.getDescription());
-        assertThat(mangaDto.getReadingSource()).isEqualTo(savedMockMangaEntity.getReadingSource());
-        assertThat(mangaDto.getReleasedDate()).isEqualTo(savedMockMangaEntity.getReleasedDate());
-        assertThat(mangaDto.getCoverPictureUrl()).isEqualTo(savedMockMangaEntity.getCoverPictureUrl());
+        Assertions.assertThrows(MangaAlreadyExistException.class, () -> {
+            mangaService.createManga(mockMangaDto);
+        });
 
-        verify(mangaMapper).toEntity(mockMangaDto);
-        verify(mangaMapper).toDto(any());
-        verify(mangaRepository).save(any());
+        verify(mangaService).existsById(mockMangaDto.getId());
+        verify(mangaMapper, never()).toEntity(any());
+        verify(mangaMapper, never()).toDto(any());
+        verify(mangaRepository, never()).save(any());
+    }
+
+    @Test
+    void createMangaShouldThrowNullPointerExceptionWhenMangaIsNull() {
+        // GIVEN
+
+        // WHENs
+        // THEN
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            mangaService.createManga(null);
+        });
+        verify(mangaMapper, never()).toEntity(any());
+        verify(mangaMapper, never()).toDto(any());
+        verify(mangaRepository, never()).save(any());
     }
 
     @Test
@@ -120,14 +126,13 @@ class MangaServiceImplTest {
         verify(mangaMapper).toEntity(mockMangaDto);
         verify(mangaRepository).save(any());
     }
-
     @Test
-    void updateMangaShouldThrowMangaNotFoundExceptionWhenMangaIsNull() throws Exception {
+    void updateMangaShouldThrowNullPointerExceptionWhenMangaIsNull() throws Exception {
         // GIVEN
 
         // WHEN
         // THEN
-        Assertions.assertThrows(MangaNotFoundException.class, () -> {
+        Assertions.assertThrows(NullPointerException.class, () -> {
             mangaService.updateManga(null);
         });
     }
@@ -187,14 +192,15 @@ class MangaServiceImplTest {
     }
 
     @Test
-    void deleteMangaByIdShouldReturnFalseWhenMangaIsNull() {
+    void deleteMangaByIdShouldThrowNullPointerExceptionWhenMangaIsNull() {
         // GIVEN
         // WHEN
-        boolean deletedMangaById = mangaService.deleteMangaById(null);
 
+        // WHEN
         // THEN
-        assertThat(deletedMangaById).isFalse();
-
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            mangaService.deleteMangaById(null);
+        });
         verify(mangaRepository, never()).deleteByMangaId(1L);
 
     }

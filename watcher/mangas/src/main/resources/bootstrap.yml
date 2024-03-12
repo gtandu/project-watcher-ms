@@ -1,14 +1,9 @@
-server.port: 7001
+server.port: ${MANGAS_SERVICE_SERVER_PORT}
 spring:
-  #  sql:
-  #    init:
-  #      mode: always
-  #      schema-locations: classpath:/data.sql
-  #      continue-on-error: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/watcher
-    username: watcher
-    password: password
+    url: ${MANGAS_SERVICE_SPRING_DATASOURCE_URL}
+    username: ${MANGAS_SERVICE_SPRING_DATASOURCE_USERNAME}
+    password: ${MANGAS_SERVICE_SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
@@ -18,26 +13,26 @@ spring:
         format_sql: true
   devtools:
     livereload:
-      port: 35701
+      port: ${MANGAS_SERVICE_SPRING_DEVTOOLS_LIVERELOAD_PORT}
   main:
     allow-bean-definition-overriding: true
   profiles:
-    active: development
+    active: ${COMMON_SERVICE_SPRING_PROFILES_ACTIVE}
   application:
-    name: mangas-service
+    name: ${MANGAS_SERVICE_SPRING_APPLICATION_NAME}
   cloud:
     config:
-      name: mangas-service
-      uri: http://localhost:8888
-      username: ${SPRING_CLOUD_CONFIG_USERNAME}
-      password: ${SPRING_CLOUD_CONFIG_PASSWORD}
-      fail-fast: false
+      name: ${MANGAS_SERVICE_SPRING_CLOUD_CONFIG_NAME}
+      uri: ${COMMON_SERVICE_SPRING_CLOUD_CONFIG_URI}
+      username: ${COMMON_SPRING_CLOUD_CONFIG_USERNAME}
+      password: ${COMMON_SPRING_CLOUD_CONFIG_PASSWORD}
+      fail-fast: ${COMMON_SPRING_CLOUD_CONFIG_FAILFAST}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/project-watcher
-          jwk-set-uri: http://localhost:8081/realms/project-watcher/protocol/openid-connect/certs
+          issuer-uri: ${COMMON_SERVICE_SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI}
+          jwk-set-uri: ${COMMON_SERVICE_SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI}
 eureka:
   instance:
     preferIpAddress: true
@@ -45,17 +40,19 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${COMMON_EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
 logging:
   file:
-    path: logs
+    path: ${MANGAS_SERVICE_LOGGING_FILE_PATH}
   level:
     root: INFO
     org.springframework.web: INFO
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
-    fr.gtandu.client.user.UserServiceClient: TRACE
-user-service:
-  urls:
-    get-user-by-id-url: /{userId}
-    add-media-to-reading-list-url: /readingMedia
+watcher-api:
+  manga:
+    baseUrl: /api/v1/mangas
+    searchByName: /{searchKey}
+    deleteMangaById: /{mangaId}
+  readingMedia:
+    baseUrl: /api/v1/reading-medias

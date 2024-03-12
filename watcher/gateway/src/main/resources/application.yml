@@ -1,18 +1,18 @@
 server:
-  port: 8762
+  port: ${GATEWAY_SERVICE_SERVER_PORT}
 spring:
   devtools:
     livereload:
-      port: 35762
+      port: ${GATEWAY_SERVICE_SPRING_DEVTOOLS_LIVERELOAD_PORT}
   application:
-    name: gateway
+    name: ${GATEWAY_SERVICE_SPRING_APPLICATION_NAME}
   profiles:
-    active: development
+    active: ${COMMON_SERVICE_SPRING_PROFILES_ACTIVE}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/project-watcher
+          issuer-uri: ${COMMON_SERVICE_SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI}
           user-name-attribute: preferred_username
 
   cloud:
@@ -24,20 +24,16 @@ spring:
       default-filters:
         - TokenRelay
       routes:
-        - id: mangas-service
-          uri: lb://MANGAS-SERVICE
+        - id: ${MANGAS_SERVICE_SPRING_APPLICATION_NAME}
+          uri: ${GATEWAY_SERVICE_SPRING_CLOUD_GATEWAY_ROUTES_MANGAS_SERVICE_URI}
           predicates:
-            - Path=/api/v1/**
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/v1/**
+            - Path=${GATEWAY_SERVICE_SPRING_CLOUD_GATEWAY_ROUTES_MANGAS_SERVICE_PREDICATES_PATH}
     config:
-      name: gateway-service
-      uri: http://localhost:8888
-      username: ${SPRING_CLOUD_CONFIG_USERNAME}
-      password: ${SPRING_CLOUD_CONFIG_PASSWORD}
-      fail-fast: false
+      name: ${GATEWAY_SERVICE_SPRING_APPLICATION_NAME}
+      uri: ${COMMON_SERVICE_SPRING_CLOUD_CONFIG_URI}
+      username: ${COMMON_SPRING_CLOUD_CONFIG_USERNAME}
+      password: ${COMMON_SPRING_CLOUD_CONFIG_PASSWORD}
+      fail-fast: ${COMMON_SPRING_CLOUD_CONFIG_FAILFAST}
 eureka:
   instance:
     preferIpAddress: true
@@ -45,5 +41,5 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${COMMON_EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
 

@@ -34,3 +34,8 @@ build/
 
 ### LOGS ###
 logs
+
+### GIT ###
+.gitkeep
+/watcher/mangas/test/spring.log
+/watcher/.env
