@@ -19,9 +19,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class ReadingFormatStatusEntity extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "reading_media_id")
-    private ReadingMediaEntity readingMedia;
-    private int mediaNumber;
+    @JoinColumn(name = "reading_manga_id")
+    private ReadingMangaEntity readingManga;
+    private int mangaNumber;
     private boolean read;
 
     @Override
@@ -30,11 +30,11 @@ public class ReadingFormatStatusEntity extends BaseEntity {
 
         if (!(o instanceof ReadingFormatStatusEntity that)) return false;
 
-        return new EqualsBuilder().appendSuper(super.equals(o)).append(getMediaNumber(), that.getMediaNumber()).append(isRead(), that.isRead()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(o)).append(getMangaNumber(), that.getMangaNumber()).append(isRead(), that.isRead()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(getMediaNumber()).append(isRead()).toHashCode();
+        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(getMangaNumber()).append(isRead()).toHashCode();
     }
 }

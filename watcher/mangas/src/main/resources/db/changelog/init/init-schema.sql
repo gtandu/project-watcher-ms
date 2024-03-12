@@ -21,9 +21,9 @@ create table IF NOT EXISTS user_entity
         unique (realm_id, username)
 );
 
-CREATE SEQUENCE IF NOT EXISTS medias_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS mangas_seq START WITH 1 INCREMENT BY 50;
 
-CREATE TABLE medias
+CREATE TABLE mangas
 (
     id                 BIGINT                      NOT NULL,
     name               TEXT                        NOT NULL,
@@ -38,15 +38,14 @@ CREATE TABLE medias
     last_modified_by   TEXT                        NOT NULL,
     last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     reading_source     TEXT,
-    media_type         TEXT,
     CONSTRAINT pk_mangas PRIMARY KEY (id)
 );
 
-CREATE INDEX index_medias_name ON medias (name);
+CREATE INDEX index_mangas_name ON mangas (name);
 
-CREATE SEQUENCE IF NOT EXISTS reading_medias_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS reading_mangas_seq START WITH 1 INCREMENT BY 50;
 
-CREATE TABLE reading_medias
+CREATE TABLE reading_mangas
 (
     id                 BIGINT                      NOT NULL,
     created_by         TEXT                        NOT NULL,
@@ -54,16 +53,16 @@ CREATE TABLE reading_medias
     last_modified_by   TEXT                        NOT NULL,
     last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     user_id            TEXT,
-    media_id           BIGINT,
+    manga_id           BIGINT,
     reading_format     TEXT,
-    CONSTRAINT pk_readingmedia PRIMARY KEY (id)
+    CONSTRAINT pk_readingmanga PRIMARY KEY (id)
 );
 
-ALTER TABLE reading_medias
-    ADD CONSTRAINT uc_readingmedia_mediaid UNIQUE (media_id);
+ALTER TABLE reading_mangas
+    ADD CONSTRAINT uc_readingmanga_mangaid UNIQUE (manga_id);
 
-ALTER TABLE reading_medias
-    ADD CONSTRAINT FK_READINGMEDIA_ON_USER FOREIGN KEY (user_id) REFERENCES user_entity (id);
+ALTER TABLE reading_mangas
+    ADD CONSTRAINT FK_READINGMANGA_ON_USER FOREIGN KEY (user_id) REFERENCES user_entity (id);
 
 CREATE SEQUENCE IF NOT EXISTS reading_format_status_seq START WITH 1 INCREMENT BY 50;
 
@@ -74,11 +73,11 @@ CREATE TABLE reading_format_status
     created_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     last_modified_by   TEXT                        NOT NULL,
     last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    reading_media_id   BIGINT,
-    media_number       INTEGER                     NOT NULL,
+    reading_manga_id   BIGINT,
+    manga_number       INTEGER                     NOT NULL,
     read               BOOLEAN                     NOT NULL,
     CONSTRAINT pk_readingformatstatus PRIMARY KEY (id)
 );
 
 ALTER TABLE reading_format_status
-    ADD CONSTRAINT FK_READINGFORMATSTATUS_ON_READING_MEDIA FOREIGN KEY (reading_media_id) REFERENCES reading_medias (id);
+    ADD CONSTRAINT FK_READINGFORMATSTATUS_ON_READING_MANGA FOREIGN KEY (reading_manga_id) REFERENCES reading_mangas (id);

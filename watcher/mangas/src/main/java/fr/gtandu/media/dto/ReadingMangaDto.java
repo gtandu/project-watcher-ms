@@ -13,11 +13,11 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReadingMediaDto extends BaseDto implements Serializable {
-    private MediaDto media;
+@SuperBuilder
+public class ReadingMangaDto extends BaseDto implements Serializable {
+    private MangaDto manga;
     private ReadingFormat readingFormat;
     private List<ReadingFormatStatusDto> readingFormatStatusList;
 }

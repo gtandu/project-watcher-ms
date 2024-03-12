@@ -28,7 +28,7 @@ public class MangaServiceImpl implements MangaService {
 
     @Override
     public MangaDto createManga(@NonNull MangaDto mangaDto) throws MangaAlreadyExistException {
-        if (existsById(mangaDto.getId())) {
+        if (null != mangaDto.getId() && existsById(mangaDto.getId())) {
             throw new MangaAlreadyExistException();
         } else {
             return mangaMapper.toDto(mangaRepository.save(mangaMapper.toEntity(mangaDto)));

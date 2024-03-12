@@ -3,7 +3,6 @@ package fr.gtandu.utils;
 
 import fr.gtandu.media.dto.MangaDto;
 import fr.gtandu.media.entity.MangaEntity;
-import fr.gtandu.media.enums.MediaType;
 
 public class MangaDtoMockUtils {
 
@@ -46,7 +45,6 @@ public class MangaDtoMockUtils {
                 .readingSource("readingSource")
                 .state("state")
                 .coverPictureUrl("coverPictureUrl")
-                .type(MediaType.MANGA)
                 .build();
     }
 
@@ -60,7 +58,6 @@ public class MangaDtoMockUtils {
                 .readingSource(mangaDto.getReadingSource())
                 .state(mangaDto.getState())
                 .coverPictureUrl(mangaDto.getCoverPictureUrl())
-                .type(mangaDto.getType())
                 .build();
     }
 

@@ -12,6 +12,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MangaDto extends MediaDto implements Serializable {
-
     private String readingSource;
 }

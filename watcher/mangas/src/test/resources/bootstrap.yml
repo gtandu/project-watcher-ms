@@ -60,5 +60,5 @@ watcher-api:
     baseUrl: /api/v1/mangas
     searchByName: /{searchKey}
     deleteMangaById: /{mangaId}
-  readingMedia:
-    baseUrl: /api/v1/reading-medias
+  readingManga:
+    baseUrl: /api/v1/reading-mangas

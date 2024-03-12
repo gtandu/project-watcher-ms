@@ -2,8 +2,8 @@ package fr.gtandu.controller;
 
 import fr.gtandu.keycloak.dto.UserDto;
 import fr.gtandu.keycloak.utils.JwtMapper;
-import fr.gtandu.media.dto.ReadingMediaDto;
-import fr.gtandu.service.ReadingMediaService;
+import fr.gtandu.media.dto.ReadingMangaDto;
+import fr.gtandu.service.ReadingMangaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -19,21 +19,21 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 @RequiredArgsConstructor
-@RequestMapping("${watcher-api.readingMedia.baseUrl}")
-public class ReadingMediaController {
-    private final ReadingMediaService readingMediaService;
+@RequestMapping("${watcher-api.readingManga.baseUrl}")
+public class ReadingMangaController {
+    private final ReadingMangaService readingMangaService;
     private final JwtMapper jwtMapper;
 
     @GetMapping
-    public ResponseEntity<List<ReadingMediaDto>> getAllReadingMediaByUserId(@AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<List<ReadingMangaDto>> getAllReadingMangasByUserId(@AuthenticationPrincipal Jwt principal) {
         UserDto userDto = jwtMapper.toUserDto(principal);
-        return ResponseEntity.ok(readingMediaService.getAllReadingMediasByUserId(userDto.getId()));
+        return ResponseEntity.ok(readingMangaService.getAllReadingMangasByUserId(userDto.getId()));
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReadingMediaDto> addMediaToReadingList(@AuthenticationPrincipal Jwt principal, @RequestBody ReadingMediaDto readingMediaDto) {
+    public ResponseEntity<ReadingMangaDto> addMangaToReadingList(@AuthenticationPrincipal Jwt principal, @RequestBody ReadingMangaDto readingMangaDto) {
         UserDto userDto = jwtMapper.toUserDto(principal);
-        return ResponseEntity.ok(readingMediaService.addMediaToReadingList(userDto, readingMediaDto));
+        return ResponseEntity.ok(readingMangaService.addMangaToReadingList(userDto, readingMangaDto));
 
     }
 }

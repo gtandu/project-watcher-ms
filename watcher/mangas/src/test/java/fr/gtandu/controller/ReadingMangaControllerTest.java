@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.gtandu.common.config.WatcherApiProperties;
 import fr.gtandu.keycloak.dto.UserDto;
 import fr.gtandu.keycloak.utils.JwtMapper;
-import fr.gtandu.media.dto.ReadingMediaDto;
-import fr.gtandu.service.ReadingMediaService;
-import fr.gtandu.utils.ReadingMediaMockDtoUtils;
+import fr.gtandu.media.dto.ReadingMangaDto;
+import fr.gtandu.service.ReadingMangaService;
+import fr.gtandu.utils.ReadingMangaMockDtoUtils;
 import fr.gtandu.utils.UserDtoMockUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ReadingMediaController.class)
-class ReadingMediaControllerTest extends SetupControllerTest {
+@WebMvcTest(controllers = ReadingMangaController.class)
+class ReadingMangaControllerTest extends SetupControllerTest {
 
     @MockBean
-    private ReadingMediaService readingMediaService;
+    private ReadingMangaService readingMangaService;
     @MockBean
     private JwtMapper jwtMapper;
     @Autowired
@@ -41,10 +41,10 @@ class ReadingMediaControllerTest extends SetupControllerTest {
         // GIVEN
         UserDto mockUserDto = UserDtoMockUtils.createMockUserDto();
         when(jwtMapper.toUserDto(any())).thenReturn(mockUserDto);
-        when(readingMediaService.getAllReadingMediasByUserId(mockUserDto.getId())).thenReturn(ReadingMediaMockDtoUtils.createMockDtoList());
+        when(readingMangaService.getAllReadingMangasByUserId(mockUserDto.getId())).thenReturn(ReadingMangaMockDtoUtils.createMockDtoList());
 
         // WHEN
-        mockMvc.perform(get(watcherApiProperties.readingMedia().baseUrl())
+        mockMvc.perform(get(watcherApiProperties.readingManga().baseUrl())
                         .with(JWT_REQUEST_POST_PROCESSOR))
                 .andDo(print())
                 // THEN
@@ -53,19 +53,19 @@ class ReadingMediaControllerTest extends SetupControllerTest {
     }
 
     @Test
-    void addMediaToReadingList() throws Exception {
+    void addMangaToReadingList() throws Exception {
         // GIVEN
         UserDto mockUserDto = UserDtoMockUtils.createMockUserDto();
-        ReadingMediaDto readingMediaDto = ReadingMediaMockDtoUtils.createMockDto(null);
-        ReadingMediaDto savedReadingMediaDto = ReadingMediaMockDtoUtils.createMockDto(1L);
+        ReadingMangaDto readingMangaDto = ReadingMangaMockDtoUtils.createMockDto(null);
+        ReadingMangaDto savedReadingMangaDto = ReadingMangaMockDtoUtils.createMockDto(1L);
 
         when(jwtMapper.toUserDto(any())).thenReturn(mockUserDto);
-        when(readingMediaService.addMediaToReadingList(mockUserDto, readingMediaDto)).thenReturn(savedReadingMediaDto);
+        when(readingMangaService.addMangaToReadingList(mockUserDto, readingMangaDto)).thenReturn(savedReadingMangaDto);
 
         // WHEN
-        mockMvc.perform(put(watcherApiProperties.readingMedia().baseUrl())
+        mockMvc.perform(put(watcherApiProperties.readingManga().baseUrl())
                         .with(JWT_REQUEST_POST_PROCESSOR)
-                        .content(objectMapper.writeValueAsString(readingMediaDto))
+                        .content(objectMapper.writeValueAsString(readingMangaDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());

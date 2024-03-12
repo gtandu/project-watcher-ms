@@ -1,6 +1,6 @@
 package fr.gtandu.keycloak.entity;
 
-import fr.gtandu.media.entity.ReadingMediaEntity;
+import fr.gtandu.media.entity.ReadingMangaEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -72,6 +72,6 @@ public class UserKeycloakEntity {
 
     @Column
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReadingMediaEntity> readingMediaList;
+    private List<ReadingMangaEntity> readingMangaList;
 
 }
