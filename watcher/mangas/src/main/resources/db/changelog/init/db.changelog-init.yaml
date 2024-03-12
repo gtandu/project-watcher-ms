@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      id: init-schema
+      author: gtandu
+      file: db/changelog/init/init-schema.sql

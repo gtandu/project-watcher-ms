@@ -25,7 +25,6 @@
 
     <modules>
         <module>mangas</module>
-        <module>shared</module>
         <module>eureka</module>
         <module>config</module>
         <module>gateway</module>

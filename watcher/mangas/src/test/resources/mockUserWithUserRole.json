@@ -1,0 +1,42 @@
+{
+  "exp": 1709180879,
+  "iat": 1709180579,
+  "auth_time": 1709180578,
+  "jti": "37c0e3df-ff37-46ca-8af7-8312f8dad7cc",
+  "iss": "http://localhost:8081/realms/project-watcher",
+  "aud": "account",
+  "sub": "8f6561be-039f-43fe-90d6-fc493cc1759a",
+  "typ": "Bearer",
+  "azp": "project-watcher-client",
+  "nonce": "bb9b8200-ce1c-40ad-8b16-dfdb0e63d324",
+  "session_state": "611b952d-0e20-4d64-8e72-dfd2f5dddcf9",
+  "acr": "1",
+  "allowed-origins": [
+    "*"
+  ],
+  "realm_access": {
+    "roles": [
+      "ROLE_USER",
+      "default-roles-project-watcher",
+      "offline_access",
+      "uma_authorization"
+    ]
+  },
+  "resource_access": {
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    }
+  },
+  "scope": "openid profile email",
+  "sid": "611b952d-0e20-4d64-8e72-dfd2f5dddcf9",
+  "email_verified": false,
+  "name": "Mock User",
+  "preferred_username": "mock.user@mail.com",
+  "given_name": "Mock",
+  "family_name": "User",
+  "email": "mock.user@mail.com"
+}

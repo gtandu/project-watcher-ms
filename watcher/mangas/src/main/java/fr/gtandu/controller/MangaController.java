@@ -1,25 +1,26 @@
 package fr.gtandu.controller;
 
+import fr.gtandu.exception.MangaAlreadyExistException;
+import fr.gtandu.media.dto.MangaDto;
 import fr.gtandu.service.MangaService;
-import fr.gtandu.shared.core.dto.MangaDto;
-import fr.gtandu.shared.core.service.MangaApi;
+import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@RestController()
+import java.net.URI;
+import java.util.List;
+
+@RestController
 @RefreshScope
 @Slf4j
-@RequestMapping("/api/v1/mangas")
-public class MangaController implements MangaApi {
+@RequestMapping("${watcher-api.manga.baseUrl}")
+public class MangaController {
 
     private final MangaService mangaService;
 
@@ -27,28 +28,34 @@ public class MangaController implements MangaApi {
         this.mangaService = mangaService;
     }
 
-    @Override
-    public ResponseEntity<Mono<MangaDto>> getMangaById(String mangaId) {
-        return ResponseEntity.ok(mangaService.getMangaById(mangaId));
+
+    @GetMapping("${watcher-api.manga.searchByName}")
+    public ResponseEntity<List<MangaDto>> searchByName(@PathVariable @NonNull @Min(3) String searchKey) {
+        return ResponseEntity.ok(mangaService.searchByName(searchKey));
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Flux<MangaDto>> getAll(@AuthenticationPrincipal Jwt principal) {
-        return ResponseEntity.ok(mangaService.getAll());
+    @PutMapping
+    public ResponseEntity<MangaDto> createManga(@RequestBody MangaDto mangaDto) {
+        try {
+            MangaDto createdManga = mangaService.createManga(mangaDto);
+
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdManga.getId()).toUri();
+
+            return ResponseEntity.created(location).body(createdManga);
+        } catch (MangaAlreadyExistException e) {
+            return new ResponseEntity<>(mangaDto, HttpStatus.CONFLICT);
+        }
     }
 
-    @Override
-    public ResponseEntity<Mono<MangaDto>> createManga(MangaDto mangaDto) {
-        return ResponseEntity.ok(mangaService.createManga(mangaDto));
-    }
-
-    @Override
-    public ResponseEntity<Mono<MangaDto>> updateManga(String mangaId, MangaDto mangaDto) {
-        return ResponseEntity.ok(mangaService.updateManga(mangaDto));
-    }
-
-    @Override
-    public ResponseEntity<Mono<Void>> deleteMangaById(String mangaId) {
-        return ResponseEntity.ok(mangaService.deleteMangaById(mangaId));
+    @DeleteMapping(value = "${watcher-api.manga.deleteMangaById}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteMangaById(@PathVariable Long mangaId) {
+        if (mangaService.deleteMangaById(mangaId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

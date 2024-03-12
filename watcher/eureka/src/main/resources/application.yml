@@ -1,5 +1,10 @@
+spring:
+  application:
+    name: ${EUREKA_SERVICE_SPRING_APPLICATION_NAME}
+  profiles:
+    active: ${COMMON_SERVICE_SPRING_PROFILES_ACTIVE}
 server:
-  port: 8761 # Le port sur lequel Eureka va écouter
+  port: ${EUREKA_SERVICE_SERVER_PORT} # Le port sur lequel Eureka va écouter
 
 eureka:
   client:
@@ -9,4 +14,4 @@ eureka:
     enableSelfPreservation: false
     waitTimeInMsWhenSyncEmpty: 5
     serviceUrl:
-      defaultZone: http://localhost:8761
+      defaultZone: ${EUREKA_SERVICE_EUREKA_SERVER_SERVICEURL_DEFAULTZONE}
