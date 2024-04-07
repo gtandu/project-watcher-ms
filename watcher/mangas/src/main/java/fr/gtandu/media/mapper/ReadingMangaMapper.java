@@ -9,10 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {MangaMapper.class, ReadingFormatStatusMapper.class})
 public interface ReadingMangaMapper {
     ReadingMangaDto toDto(ReadingMangaEntity readingMangaEntity);
-
     ReadingMangaEntity toEntity(ReadingMangaDto readingMediaDto);
-
     List<ReadingMangaDto> toDtoList(List<ReadingMangaEntity> readingMangaEntityList);
-
-    List<ReadingMangaEntity> toEntityList(List<ReadingMangaDto> readingMangaDtoList);
 }

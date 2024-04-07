@@ -6,16 +6,19 @@ import fr.gtandu.utils.ReadingMangaMockUtils;
 import fr.gtandu.utils.UserMockUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
+import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @DataJpaTest
 @ActiveProfiles("noKeycloak")
 class ReadingMangaRepositoryTest {
@@ -53,36 +56,55 @@ class ReadingMangaRepositoryTest {
     void findAllByUserIdShouldReturnReadingMangaList() {
         // GIVEN
         // WHEN
-        List<ReadingMangaEntity> allByUserId = readingMangaRepository.findAllByUserId(userKeycloakEntity.getId()).get();
+        Slice<ReadingMangaEntity> allByUserId = readingMangaRepository.findByUserId(userKeycloakEntity.getId(), null);
 
         // THEN
 
-        assertThat(allByUserId).isNotEmpty();
-        assertThat(allByUserId).extracting("id", "user.id").containsExactly(
+        assertThat(allByUserId).isNotNull();
+        assertThat(allByUserId.getContent()).isNotEmpty().extracting("id", "user.id").containsExactly(
                 tuple(readingMangaEntitySaved1.getId(), userKeycloakEntity.getId()),
                 tuple(readingMangaEntitySaved2.getId(), userKeycloakEntity.getId()),
                 tuple(readingMangaEntitySaved3.getId(), userKeycloakEntity.getId())
         );
     }
 
-    @Test
-    void findAllByUserIdShouldReturnEmptyListWhenUserIdIsNull() {
-        // GIVEN
-        // WHEN
-        List<ReadingMangaEntity> allByUserId = readingMangaRepository.findAllByUserId(null).get();
-
-        // THEN
-        assertThat(allByUserId).isEmpty();
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"unknown"})
+    void findAllByUserIdShouldReturnEmptyListWhenUserIdIsNullOrEmptyOrUnknown(String userId) {
+        assertThat(readingMangaRepository.findByUserId(userId, null)).isEmpty();
     }
 
     @Test
-    void findAllByUserIdShouldReturnEmptyListWhenUserIdIsUnknown() {
+    void findAllByUserIdShouldReturnReadingMangaListFirstPageWithThreeElements() {
         // GIVEN
-        String unknownId = "unknown";
+        int expectedSize = 3;
+
         // WHEN
-        List<ReadingMangaEntity> allByUserId = readingMangaRepository.findAllByUserId(unknownId).get();
+        Slice<ReadingMangaEntity> allByUserId = readingMangaRepository.findByUserId(userKeycloakEntity.getId(), PageRequest.of(0, PAGE_SIZE_LIMIT));
 
         // THEN
-        assertThat(allByUserId).isEmpty();
+
+        assertThat(allByUserId).isNotNull();
+        assertThat(allByUserId.getContent()).isNotEmpty().hasSize(expectedSize).extracting("id", "user.id").containsExactly(
+                tuple(readingMangaEntitySaved1.getId(), userKeycloakEntity.getId()),
+                tuple(readingMangaEntitySaved2.getId(), userKeycloakEntity.getId()),
+                tuple(readingMangaEntitySaved3.getId(), userKeycloakEntity.getId()));
+    }
+
+    @Test
+    void findAllByUserIdShouldReturnReadingMangaListFirstPageWithTwoElementsNEW() {
+        // GIVEN
+        int expectedSize = 2;
+
+        // WHEN
+        Slice<ReadingMangaEntity> allByUserId = readingMangaRepository.findByUserId(userKeycloakEntity.getId(), PageRequest.of(0, expectedSize));
+
+        // THEN
+
+        assertThat(allByUserId).isNotNull();
+        assertThat(allByUserId.getContent()).isNotEmpty().hasSize(expectedSize).extracting("id", "user.id").containsExactly(
+                tuple(readingMangaEntitySaved1.getId(), userKeycloakEntity.getId()),
+                tuple(readingMangaEntitySaved2.getId(), userKeycloakEntity.getId()));
     }
 }

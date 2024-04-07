@@ -48,6 +48,19 @@ public class MangaDtoMockUtils {
                 .build();
     }
 
+    public static MangaDto createMockMangaDto(Long id, String name) {
+        return MangaDto.builder()
+                .id(id)
+                .name(name)
+                .description("description")
+                .rate(5.0)
+                .review("review")
+                .readingSource("readingSource")
+                .state("state")
+                .coverPictureUrl("coverPictureUrl")
+                .build();
+    }
+
     public static MangaDto copyMockMangaDto(MangaDto mangaDto) {
         return MangaDto.builder()
                 .id(mangaDto.getId())

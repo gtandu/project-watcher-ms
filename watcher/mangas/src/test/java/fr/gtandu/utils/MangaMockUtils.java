@@ -41,4 +41,11 @@ public class MangaMockUtils {
         return mockManga;
     }
 
+    public static MangaEntity createMockManga(Long id, String name) {
+        MangaEntity mockManga = createMockManga();
+        mockManga.setId(id);
+        mockManga.setName(name);
+        return mockManga;
+    }
+
 }

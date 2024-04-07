@@ -21,7 +21,7 @@ create table IF NOT EXISTS user_entity
         unique (realm_id, username)
 );
 
-CREATE SEQUENCE IF NOT EXISTS mangas_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS mangas_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE mangas
 (
@@ -43,7 +43,7 @@ CREATE TABLE mangas
 
 CREATE INDEX index_mangas_name ON mangas (name);
 
-CREATE SEQUENCE IF NOT EXISTS reading_mangas_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS reading_mangas_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE reading_mangas
 (
@@ -64,7 +64,7 @@ ALTER TABLE reading_mangas
 ALTER TABLE reading_mangas
     ADD CONSTRAINT FK_READINGMANGA_ON_USER FOREIGN KEY (user_id) REFERENCES user_entity (id);
 
-CREATE SEQUENCE IF NOT EXISTS reading_format_status_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS reading_format_status_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE reading_format_status
 (
