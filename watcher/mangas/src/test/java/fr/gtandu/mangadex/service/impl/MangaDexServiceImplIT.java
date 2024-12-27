@@ -31,7 +31,7 @@ class MangaDexServiceImplIT {
         String title = "Naruto";
         String nameProperty = "name";
         // WHEN
-        List<MangaDto> mangaDtoList = mangaDexService.searchMangaByTitle(title);
+        List<MangaDto> mangaDtoList = mangaDexService.searchMangaByTitle(title, 10);
 
         // THEN
         assertThat(mangaDtoList)
@@ -47,7 +47,7 @@ class MangaDexServiceImplIT {
         // GIVEN
         String title = "Azertyyyyy";
         // WHEN
-        List<MangaDto> mangaDtoList = mangaDexService.searchMangaByTitle(title);
+        List<MangaDto> mangaDtoList = mangaDexService.searchMangaByTitle(title, 10);
 
         // THEN
         assertThat(mangaDtoList)

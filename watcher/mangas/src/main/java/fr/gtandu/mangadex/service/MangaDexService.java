@@ -14,7 +14,8 @@ public interface MangaDexService {
      * If the API response is null, it returns an empty list.
      *
      * @param title The title of the manga to search for.
+     * @param limit The maximum number of results to return.
      * @return A list of MangaDto objects representing the search results, or an empty list if the API response is null.
      */
-    List<MangaDto> searchMangaByTitle(String title);
+    List<MangaDto> searchMangaByTitle(String title, Integer limit);
 }

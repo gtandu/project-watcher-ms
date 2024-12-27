@@ -14,6 +14,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+    show-sql: true
   devtools:
     livereload:
       port: ${MANGAS_SERVICE_SPRING_DEVTOOLS_LIVERELOAD_PORT}
@@ -82,3 +83,4 @@ manga-dex-api:
       queryParamExcludedTagIDs: "excludedTags[]"
       excludedTagNames:
         - Doujinshi
+  searchLimit: 5

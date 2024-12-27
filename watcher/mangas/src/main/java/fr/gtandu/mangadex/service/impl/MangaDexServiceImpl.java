@@ -29,12 +29,9 @@ public class MangaDexServiceImpl implements MangaDexService {
 
 
     @Override
-    public List<MangaDto> searchMangaByTitle(String title) {
-        // Retrieve a list of doujinshi IDs
-        List<String> doujinshiIds = getDoujinshiIds();
-
+    public List<MangaDto> searchMangaByTitle(String title, Integer limit) {
         // Make a request to the MangaDex API to search for manga with the given title, excluding the doujinshi
-        MangaDexResponse mangaDexResponse = getMangaDexResponse(title, doujinshiIds);
+        MangaDexResponse mangaDexResponse = getMangaDexResponse(title, limit);
 
         // If the API response is not null, map the response data to a list of MangaDto objects and return it
         if (mangaDexResponse != null) {
@@ -65,14 +62,14 @@ public class MangaDexServiceImpl implements MangaDexService {
                 .toList();
     }
 
-    private MangaDexResponse getMangaDexResponse(String title, List<String> doujinshiIds) {
+    private MangaDexResponse getMangaDexResponse(String title, Integer limit) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(mangaDexApiProperties.searchManga().uri())
                         .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamNameTitle(), title)
-                        .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamNameLimit(), mangaDexApiProperties.searchManga().queryParams().queryParamValueLimit())
+                        .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamNameLimit(), limit != null ? limit : mangaDexApiProperties.searchManga().queryParams().queryParamValueLimit())
                         .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamNameIncludes(), mangaDexApiProperties.searchManga().queryParams().queryParamValueIncludes())
-                        .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamExcludedTagIDs(), doujinshiIds)
+                        .queryParam(mangaDexApiProperties.searchManga().queryParams().queryParamExcludedTagIDs(), getDoujinshiIds())
                         .build())
                 .retrieve()
                 .bodyToMono(MangaDexResponse.class)

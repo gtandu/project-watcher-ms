@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
+import static fr.gtandu.common.constant.AppConstant.SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT;
 import static fr.gtandu.utils.MangaDtoMockUtils.createMockMangaDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -143,14 +143,13 @@ class MangaServiceImplTest {
     @Test
     void updateMangaShouldThrowNullPointerExceptionWhenMangaIsNull() {
         // GIVEN
-
         // WHEN
         // THEN
         assertThrows(NullPointerException.class, () -> mangaService.updateManga(null));
     }
 
     @Test
-    void updateMangaShouldThrowMangaNotFoundExceptionWhenMangaIdIsNull() throws Exception {
+    void updateMangaShouldThrowMangaNotFoundExceptionWhenMangaIdIsNull() {
         // GIVEN
         MangaDto mockMangaDto = createMockMangaDto(null);
         // WHEN
@@ -159,7 +158,7 @@ class MangaServiceImplTest {
     }
 
     @Test
-    void updateMangaShouldThrowMangaNotFoundExceptionWhenMangaIdIsUnknown() throws Exception {
+    void updateMangaShouldThrowMangaNotFoundExceptionWhenMangaIdIsUnknown() {
         // GIVEN
         MangaDto mockMangaDto = createMockMangaDto(12L);
         when(mangaRepository.existsById(mockMangaDto.getId())).thenReturn(false);
@@ -227,11 +226,11 @@ class MangaServiceImplTest {
     @Test
     void searchByNameShouldReturnPageSizeLimitMangasFromBddWithNameContainsNaruto() {
         // GIVEN
-        Pageable pageable = PageRequest.of(0, PAGE_SIZE_LIMIT);
+        Pageable pageable = PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT);
 
         List<MangaEntity> mangaEntityList = new ArrayList<>();
 
-        for (long i = 0L; i < PAGE_SIZE_LIMIT; i++) {
+        for (long i = 0L; i < SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT; i++) {
             mangaEntityList.add(MangaMockUtils.createMockManga(i, "Naruto " + i));
         }
 
@@ -244,16 +243,16 @@ class MangaServiceImplTest {
         // THEN
         assertThat(mangaDtoList).isNotEmpty();
 
-        verify(mangaDexService, never()).searchMangaByTitle(NAR);
+        verify(mangaDexService, never()).searchMangaByTitle(NAR, pageable.getPageSize());
         verify(mangaMapper).toDtoList(mangaEntityList);
         verify(mangaRepository).findByNameStartingWith(NAR, pageable);
     }
 
     @Test
-    void searchByNameShouldReturnDistinctSevenMangasFromBddAndMangaDexWithNameContainsNaruto() {
+    void searchByNameShouldReturnDistinctMangasFromBddAndMangaDexWithNameContainsNaruto() {
         // GIVEN
         Pageable pageable = PageRequest.of(0, 5);
-        int expectedSize = 7;
+        int expectedSize = 6;
 
         List<MangaEntity> mangaEntityList = Arrays.asList(
                 MangaMockUtils.createMockManga(1L, "Renge to Naruto!"),
@@ -264,11 +263,12 @@ class MangaServiceImplTest {
                 createMockMangaDto(null, "Renge to Naruto!"),
                 createMockMangaDto(null, "Naruto"),
                 createMockMangaDto(null, "CC NARUTO: Fuu no Sho - Sugao no Shinjitsu...!!"),
-                createMockMangaDto(null, "AA NARUTO: Rai no Sho - Ai wo Itareta Kemono!!")
+                createMockMangaDto(null, "AA NARUTO: Rai no Sho - Ai wo Itareta Kemono!!"),
+                createMockMangaDto(null, "Bleach")
         );
 
         when(mangaRepository.findByNameStartingWith(NAR, pageable)).thenReturn(mangaEntityList);
-        when(mangaDexService.searchMangaByTitle(NAR)).thenReturn(mangaDexList);
+        when(mangaDexService.searchMangaByTitle(NAR, pageable.getPageSize())).thenReturn(mangaDexList);
 
         // WHEN
         List<MangaDto> mangaDtoList = mangaService.searchByName(NAR, pageable);
@@ -280,7 +280,7 @@ class MangaServiceImplTest {
                 .isSortedAccordingTo(Comparator.comparing(MediaDto::getName))
                 .doesNotHaveDuplicates();
 
-        verify(mangaDexService).searchMangaByTitle(NAR);
+        verify(mangaDexService).searchMangaByTitle(NAR, pageable.getPageSize());
         verify(mangaRepository).findByNameStartingWith(NAR, pageable);
     }
 
@@ -288,12 +288,12 @@ class MangaServiceImplTest {
     void searchByNameShouldThrowExceptionWhenPageSizeExceedsLimit() {
         // Given
         String searchKey = "Naruto";
-        Pageable pageable = PageRequest.of(0, PAGE_SIZE_LIMIT + 1);
+        Pageable pageable = PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT + 1);
 
         // When
         Exception exception = assertThrows(IllegalArgumentException.class, () -> mangaService.searchByName(searchKey, pageable));
 
         // Then
-        assertThat(exception.getMessage()).isEqualTo("Page size exceeds the limit");
+        assertThat(exception.getMessage()).isEqualTo("Page size exceeds the limit. Current limit : 10 Request size : 11");
     }
 }

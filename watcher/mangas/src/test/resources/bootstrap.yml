@@ -73,7 +73,7 @@ manga-dex-api:
     queryParams:
       queryParamNameTitle: title
       queryParamNameLimit: limit
-      queryParamValueLimit: 5
+      queryParamValueLimit: 20
       queryParamNameIncludes: "includes[]"
       queryParamValueIncludes:
         - cover_art

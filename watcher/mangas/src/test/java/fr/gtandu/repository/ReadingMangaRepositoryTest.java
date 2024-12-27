@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 
-import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
+import static fr.gtandu.common.constant.AppConstant.SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -81,7 +81,7 @@ class ReadingMangaRepositoryTest {
         int expectedSize = 3;
 
         // WHEN
-        Slice<ReadingMangaEntity> allByUserId = readingMangaRepository.findByUserId(userKeycloakEntity.getId(), PageRequest.of(0, PAGE_SIZE_LIMIT));
+        Slice<ReadingMangaEntity> allByUserId = readingMangaRepository.findByUserId(userKeycloakEntity.getId(), PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT));
 
         // THEN
 

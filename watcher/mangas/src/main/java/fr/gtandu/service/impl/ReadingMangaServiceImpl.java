@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
+import static fr.gtandu.common.constant.AppConstant.GET_READING_MANGAS_PAGE_SIZE_LIMIT;
 
 /**
  * This class provides the implementation for the ReadingMangaService interface.
@@ -54,9 +54,10 @@ public class ReadingMangaServiceImpl implements ReadingMangaService {
     @Override
     public Slice<ReadingMangaDto> getAllReadingMangasByUserId(String userId, Pageable pageable) {
         log.info("Fetching all reading mangas for user with ID: {}", userId);
-        if (pageable.getPageSize() > PAGE_SIZE_LIMIT) {
-            log.error("Page size exceeds the limit");
-            throw new IllegalArgumentException("Page size exceeds the limit");
+        if (pageable.getPageSize() > GET_READING_MANGAS_PAGE_SIZE_LIMIT) {
+            String errorMessage = "Page size exceeds the limit. Current limit : ".concat(String.valueOf(GET_READING_MANGAS_PAGE_SIZE_LIMIT)).concat(" Request size : ");
+            log.error(errorMessage.concat(String.valueOf(pageable.getPageSize())));
+            throw new IllegalArgumentException(errorMessage.concat(String.valueOf(pageable.getPageSize())));
         }
         return readingMangaRepository.findByUserId(userId, pageable).map(readingMangaMapper::toDto);
     }

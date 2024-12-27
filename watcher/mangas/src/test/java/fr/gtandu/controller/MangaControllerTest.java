@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
+import static fr.gtandu.common.constant.AppConstant.SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT;
 import static fr.gtandu.utils.MangaDtoMockUtils.createMockMangaDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -63,14 +63,15 @@ class MangaControllerTest extends SetupControllerTest {
     @WithMockUser(username = "user")
     void searchByNameReturnsOkWhenMangasAreFoundedOrNot(String searchKey, List<MangaDto> mangaDtoList) throws Exception {
         // GIVEN
-        Pageable pageable = PageRequest.of(0, PAGE_SIZE_LIMIT);
+        Pageable pageable = PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT);
         final String SEARCH_BY_NAME_URL = watcherApiProperties.manga().baseUrl().concat(watcherApiProperties.manga().searchByName());
 
 
         when(mangaService.searchByName(searchKey, pageable)).thenReturn(mangaDtoList);
 
         // WHEN
-        mockMvc.perform(get(SEARCH_BY_NAME_URL, searchKey))
+        mockMvc.perform(get(SEARCH_BY_NAME_URL, searchKey)
+                        .param("size", String.valueOf(SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()", CoreMatchers.is(mangaDtoList.size())));
 
@@ -84,7 +85,7 @@ class MangaControllerTest extends SetupControllerTest {
     @WithMockUser(username = "user")
     void searchByNameReturnsBadRequestWhenSearchKeyIsTooShort() throws Exception {
         // GIVEN
-        Pageable pageable = PageRequest.of(0, PAGE_SIZE_LIMIT);
+        Pageable pageable = PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT);
         final String SEARCH_BY_NAME_URL = watcherApiProperties.manga().baseUrl().concat(watcherApiProperties.manga().searchByName());
         String searchKey = "Na";
 

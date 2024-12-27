@@ -18,8 +18,12 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
-import static fr.gtandu.common.constant.AppConstant.PAGE_SIZE_LIMIT;
+import static fr.gtandu.common.constant.AppConstant.SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT;
 
 /**
  * MangaServiceImpl is a service class that implements the MangaService interface.
@@ -104,9 +108,9 @@ public class MangaServiceImpl implements MangaService {
      */
     @Override
     public List<MangaDto> searchByName(String searchKey, Pageable pageable) {
-        if (pageable.getPageSize() > PAGE_SIZE_LIMIT) {
+        if (pageable.getPageSize() > SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT) {
             log.warn("Page size exceeds the limit");
-            throw new IllegalArgumentException("Page size exceeds the limit");
+            throw new IllegalArgumentException("Page size exceeds the limit. Current limit : ".concat(String.valueOf(SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT)).concat(" ").concat("Request size : ").concat(String.valueOf(pageable.getPageSize())));
         }
 
         if (StringUtils.length(searchKey) < 3) {
@@ -115,12 +119,12 @@ public class MangaServiceImpl implements MangaService {
         }
 
         List<MangaDto> mangaDtoList = mangaMapper.toDtoList(mangaRepository.findByNameStartingWith(searchKey, pageable));
-        if (mangaDtoList.size() < PAGE_SIZE_LIMIT) {
-            mangaDtoList.addAll(mangaDexService.searchMangaByTitle(searchKey));
+        if (mangaDtoList.size() < SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT) {
+            mangaDtoList.addAll(mangaDexService.searchMangaByTitle(searchKey, pageable.getPageSize()));
         }
 
         return mangaDtoList.stream()
-                .distinct()
+                .filter(distinctByKey(MediaDto::getName))
                 .sorted(Comparator.comparing(MediaDto::getName))
                 .toList();
     }
@@ -134,5 +138,12 @@ public class MangaServiceImpl implements MangaService {
     @Override
     public boolean existsById(@NonNull Long id) {
         return mangaRepository.existsById(id);
+    }
+
+    public static <T> Predicate<T> distinctByKey(
+            Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }
