@@ -5,6 +5,7 @@ import fr.gtandu.mangadex.dto.MangaDexResponse;
 import fr.gtandu.mangadex.service.MangaDexService;
 import fr.gtandu.media.dto.MangaDto;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,6 +29,7 @@ public class MangaDexServiceImpl implements MangaDexService {
     }
 
 
+    @Cacheable(value = "mangaDexCache", key = "#title")
     @Override
     public List<MangaDto> searchMangaByTitle(String title, Integer limit) {
         // Make a request to the MangaDex API to search for manga with the given title, excluding the doujinshi

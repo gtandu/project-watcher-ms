@@ -4,7 +4,6 @@ import fr.gtandu.exception.MangaAlreadyExistException;
 import fr.gtandu.exception.MangaNotFoundException;
 import fr.gtandu.mangadex.service.MangaDexService;
 import fr.gtandu.media.dto.MangaDto;
-import fr.gtandu.media.dto.MediaDto;
 import fr.gtandu.media.mapper.MangaMapper;
 import fr.gtandu.repository.MangaRepository;
 import fr.gtandu.service.MangaService;
@@ -124,8 +123,8 @@ public class MangaServiceImpl implements MangaService {
         }
 
         return mangaDtoList.stream()
-                .filter(distinctByKey(MediaDto::getName))
-                .sorted(Comparator.comparing(MediaDto::getName))
+                .filter(distinctByKey(MangaDto::getName))
+                .sorted(Comparator.comparing(MangaDto::getName))
                 .toList();
     }
 

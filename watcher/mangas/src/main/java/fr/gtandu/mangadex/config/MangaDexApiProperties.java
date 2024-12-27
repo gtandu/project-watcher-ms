@@ -6,7 +6,7 @@ import java.util.List;
 
 @ConfigurationProperties(prefix = "manga-dex-api")
 public record MangaDexApiProperties(String baseUrl, SearchCover searchCover, SearchManga searchManga,
-                                    SearchTags searchTags) {
+                                    SearchTags searchTags, Integer searchLimit, String cacheName) {
 
     public record QueryParams(String queryParamNameTitle, String queryParamNameLimit, Integer queryParamValueLimit,
                               String queryParamNameIncludes,
