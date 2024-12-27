@@ -1,5 +1,12 @@
 server.port: ${MANGAS_SERVICE_SERVER_PORT}
 spring:
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000
   h2:
     console:
       enabled: false
@@ -14,8 +21,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: true
   devtools:
+    restart:
+      enabled: false
     livereload:
       port: ${MANGAS_SERVICE_SPRING_DEVTOOLS_LIVERELOAD_PORT}
   main:
@@ -58,6 +66,8 @@ logging:
     org.springframework.web: INFO
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis: DEBUG
 watcher-api:
   manga:
     baseUrl: /api/v1/mangas
