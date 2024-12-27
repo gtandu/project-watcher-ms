@@ -14,6 +14,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+    show-sql: true
   devtools:
     livereload:
       port: ${MANGAS_SERVICE_SPRING_DEVTOOLS_LIVERELOAD_PORT}
@@ -36,6 +37,11 @@ spring:
         jwt:
           issuer-uri: ${COMMON_SERVICE_SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI}
           jwk-set-uri: ${COMMON_SERVICE_SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI}
+jwt:
+  auth:
+    converter:
+      resource-id: project-watcher-client
+      principal-attribute: preferred_username
 eureka:
   instance:
     preferIpAddress: true
@@ -55,7 +61,26 @@ logging:
 watcher-api:
   manga:
     baseUrl: /api/v1/mangas
-    searchByName: /{searchKey}
+    searchByName: /search/{searchKey}
     deleteMangaById: /{mangaId}
   readingManga:
     baseUrl: /api/v1/reading-mangas
+manga-dex-api:
+  baseUrl: https://api.mangadex.org
+  searchCover:
+    uri: https://uploads.mangadex.org/covers
+  searchTags:
+    uri: /manga/tag
+  searchManga:
+    uri: /manga
+    queryParams:
+      queryParamNameTitle: title
+      queryParamNameLimit: limit
+      queryParamValueLimit: 20
+      queryParamNameIncludes: "includes[]"
+      queryParamValueIncludes:
+        - cover_art
+      queryParamExcludedTagIDs: "excludedTags[]"
+      excludedTagNames:
+        - Doujinshi
+  searchLimit: 5

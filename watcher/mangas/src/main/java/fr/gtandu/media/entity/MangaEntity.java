@@ -1,9 +1,6 @@
 package fr.gtandu.media.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +18,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @Table(name = "mangas", indexes = {
         @Index(name = "index_mangas_name", columnList = "name")
 })
+@SequenceGenerator(name = "mangas_seq", sequenceName = "mangas_seq", allocationSize = 1)
 public class MangaEntity extends MediaEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mangas_seq")
+    private Long id;
 
     @Column(name = "reading_source")
     private String readingSource;

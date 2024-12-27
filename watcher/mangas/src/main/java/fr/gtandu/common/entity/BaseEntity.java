@@ -1,6 +1,8 @@
 package fr.gtandu.common.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,10 +24,6 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @AllArgsConstructor
 public abstract class BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)

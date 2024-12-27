@@ -1,10 +1,7 @@
 package fr.gtandu.media.entity;
 
 import fr.gtandu.common.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,8 +13,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reading_format_status")
+@SequenceGenerator(name = "reading_format_status_seq", sequenceName = "reading_format_status_seq", allocationSize = 1)
 public class ReadingFormatStatusEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reading_format_status_seq")
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "reading_manga_id")
     private ReadingMangaEntity readingManga;

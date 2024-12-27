@@ -2,11 +2,13 @@ package fr.gtandu.service.impl;
 
 import fr.gtandu.exception.MangaAlreadyExistException;
 import fr.gtandu.keycloak.dto.UserDto;
-import fr.gtandu.keycloak.mapper.UserMapper;
 import fr.gtandu.keycloak.mapper.UserMapperImpl;
+import fr.gtandu.media.dto.MangaDto;
 import fr.gtandu.media.dto.ReadingMangaDto;
 import fr.gtandu.media.entity.ReadingMangaEntity;
-import fr.gtandu.media.mapper.*;
+import fr.gtandu.media.mapper.MangaMapperImpl;
+import fr.gtandu.media.mapper.ReadingFormatStatusMapperImpl;
+import fr.gtandu.media.mapper.ReadingMangaMapperImpl;
 import fr.gtandu.repository.ReadingMangaRepository;
 import fr.gtandu.service.MangaService;
 import fr.gtandu.service.UserService;
@@ -16,19 +18,23 @@ import fr.gtandu.utils.UserDtoMockUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 
+import static fr.gtandu.common.constant.AppConstant.SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT;
+import static java.util.Collections.EMPTY_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,77 +48,72 @@ class ReadingMangaServiceImplTest {
     private ReadingMangaRepository readingMangaRepository;
     @Mock
     private UserService userService;
-    @Spy
-    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-    @Spy
-    private ReadingMangaMapper readingMangaMapper = Mappers.getMapper(ReadingMangaMapper.class);
+    @Mock
+    private UserMapperImpl userMapper = mock(UserMapperImpl.class);
+    @Mock
+    private ReadingMangaMapperImpl readingMangaMapper = mock(ReadingMangaMapperImpl.class);
 
     @InjectMocks
     @Spy
     private ReadingMangaServiceImpl readingMangaService;
 
-    private final String USER_ID = "8f6561be-039f-43fe-90d6-fc493cc1759a";
-
+    private final String userId = "8f6561be-039f-43fe-90d6-fc493cc1759a";
 
     @BeforeEach
     public void init() {
-        MangaMapper mangaMapper = Mappers.getMapper(MangaMapper.class);
-        ReadingFormatStatusMapper readingFormatStatusMapper = Mappers.getMapper(ReadingFormatStatusMapper.class);
+        MangaMapperImpl mangaMapper = mock(MangaMapperImpl.class);
+        ReadingFormatStatusMapperImpl readingFormatStatusMapper = mock(ReadingFormatStatusMapperImpl.class);
 
         ReflectionTestUtils.setField(readingMangaMapper, "mangaMapper", mangaMapper);
         ReflectionTestUtils.setField(readingMangaMapper, "readingFormatStatusMapper", readingFormatStatusMapper);
     }
 
     @Test
-    void getAllReadingMangasByUserIdShouldReturnEmptyListOfReadingMangasWhenOptionalIsEmpty() {
+    void getAllReadingMangasByUserIdShouldReturnEmptyListOfReadingMangasWhenUserHasNoReadingMangas() {
         // GIVEN
-        String userId = "8f6561be-039f-43fe-90d6-fc493cc1759a";
+        Pageable pageable = PageRequest.of(0, SEARCH_MANGAS_BY_NAME_PAGE_SIZE_LIMIT);
 
-        doCallRealMethod().when(readingMangaMapper).toDtoList(anyList());
-        when(readingMangaRepository.findAllByUserId(userId)).thenReturn(Optional.empty());
+        when(readingMangaRepository.findByUserId(userId, pageable)).thenReturn(new SliceImpl<>(EMPTY_LIST));
 
         // WHEN
-        List<ReadingMangaDto> allReadingMangasByUserId = readingMangaService.getAllReadingMangasByUserId(userId);
+        Slice<ReadingMangaDto> allReadingMangasByUserId = readingMangaService.getAllReadingMangasByUserId(userId, pageable);
 
         // THEN
         assertThat(allReadingMangasByUserId).isEmpty();
 
-        verify(readingMangaMapper).toDtoList(any());
-        verify(readingMangaRepository).findAllByUserId(userId);
+        verify(readingMangaMapper, never()).toDto(any(ReadingMangaEntity.class));
+        verify(readingMangaRepository).findByUserId(userId, pageable);
     }
 
     @Test
-    void getAllReadingMangasByUserIdShouldReturnFilledListOfReadingMangas() {
-        // GIVEN
-        long readingMangaId1 = 1L;
-        long mangaId1 = 10L;
-        ReadingMangaEntity readingMangaEntity1 = ReadingMangaMockUtils.createMock(readingMangaId1, mangaId1);
-        ReadingMangaDto readingMangaDto1 = ReadingMangaMockDtoUtils.createMockDto(readingMangaId1, mangaId1);
+    void getAllReadingMangasByUserIdShouldReturnReadingMangasWhenPageSizeIsWithinLimit() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 5); // PAGE_SIZE_LIMIT > 5
+        Slice<ReadingMangaEntity> readingMangaEntities = new SliceImpl<>(Collections.singletonList(new ReadingMangaEntity()));
+        when(readingMangaRepository.findByUserId(userId, pageable)).thenReturn(readingMangaEntities);
+        when(readingMangaMapper.toDto(any(ReadingMangaEntity.class))).thenReturn(new ReadingMangaDto());
 
-        long readingMangaId2 = 2L;
-        long mangaId2 = 20L;
-        ReadingMangaEntity readingMangaEntity2 = ReadingMangaMockUtils.createMock(readingMangaId2, mangaId2);
-        ReadingMangaDto readingMangaDto2 = ReadingMangaMockDtoUtils.createMockDto(readingMangaId2, mangaId2);
+        // When
+        Slice<ReadingMangaDto> result = readingMangaService.getAllReadingMangasByUserId(userId, pageable);
 
-        long readingMangaId3 = 3L;
-        long mangaId3 = 30L;
-        ReadingMangaEntity readingMangaEntity3 = ReadingMangaMockUtils.createMock(readingMangaId3, mangaId3);
-        ReadingMangaDto readingMangaDto3 = ReadingMangaMockDtoUtils.createMockDto(readingMangaId3, mangaId3);
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isNotEmpty();
+        verify(readingMangaRepository).findByUserId(userId, pageable);
+        verify(readingMangaMapper, times(1)).toDto(any(ReadingMangaEntity.class));
+    }
 
-        List<ReadingMangaDto> expectedReadingMangaDtoList = Arrays.asList(readingMangaDto1, readingMangaDto2, readingMangaDto3);
+    @Test
+    void getAllReadingMangasByUserIdShouldThrowExceptionWhenPageSizeExceedsLimit() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 100); // PAGE_SIZE_LIMIT < 100
 
-        doCallRealMethod().when(readingMangaMapper).toDtoList(anyList());
-        when(readingMangaRepository.findAllByUserId(USER_ID)).thenReturn(Optional.of(Arrays.asList(readingMangaEntity1, readingMangaEntity2, readingMangaEntity3)));
+        // When
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> readingMangaService.getAllReadingMangasByUserId(userId, pageable));
 
-        // WHEN
-        List<ReadingMangaDto> allReadingMangasByUserId = readingMangaService.getAllReadingMangasByUserId(USER_ID);
-
-        // THEN
-        assertThat(allReadingMangasByUserId)
-                .isNotEmpty();
-
-        verify(readingMangaMapper).toDtoList(any());
-        verify(readingMangaRepository).findAllByUserId(USER_ID);
+        // Then
+        assertThat(exception.getMessage()).isEqualTo("Page size exceeds the limit. Current limit : 20 Request size : 100");
+        verify(readingMangaRepository, never()).findByUserId(anyString(), any(Pageable.class));
     }
 
     @Test
@@ -132,24 +133,45 @@ class ReadingMangaServiceImplTest {
     }
 
     @Test
-    void addMangaToReadingList() throws MangaAlreadyExistException {
-        // GIVEN
-        UserDto userDto = UserDtoMockUtils.createMockUserDto(USER_ID);
-
+    void addMangaToReadingListAddsMangaWhenMangaDoesNotExist() throws MangaAlreadyExistException {
+        // Given
+        UserDto userDto = UserDtoMockUtils.createMockUserDto(userId);
         ReadingMangaDto readingMangaDto = ReadingMangaMockDtoUtils.createMockDto(null);
         ReadingMangaDto expectedSavedReadingMediaDto = ReadingMangaMockDtoUtils.createMockDto();
 
+        when(mangaService.createManga(any(MangaDto.class))).thenReturn(new MangaDto());
+        when(readingMangaMapper.toEntity(any())).thenCallRealMethod();
+        when(userMapper.toEntity(any())).thenCallRealMethod();
+        doReturn(expectedSavedReadingMediaDto).when(readingMangaService).save(any());
+
+        // When
+        ReadingMangaDto savedReadingMediaDto = readingMangaService.addMangaToReadingList(userDto, readingMangaDto);
+
+        // Then
+        assertThat(savedReadingMediaDto).isEqualTo(expectedSavedReadingMediaDto);
+        verify(mangaService).createManga(any(MangaDto.class));
+        verify(readingMangaMapper).toEntity(any());
+        verify(userMapper).toEntity(any());
+        verify(readingMangaService).save(any());
+    }
+
+    @Test
+    void addMangaToReadingListAddsMangaWhenMangaAlreadyExists() throws MangaAlreadyExistException {
+        // Given
+        UserDto userDto = UserDtoMockUtils.createMockUserDto(userId);
+        ReadingMangaDto readingMangaDto = ReadingMangaMockDtoUtils.createMockDto(null);
+        ReadingMangaDto expectedSavedReadingMediaDto = ReadingMangaMockDtoUtils.createMockDto();
 
         when(mangaService.createManga(readingMangaDto.getManga())).thenThrow(MangaAlreadyExistException.class);
         when(readingMangaMapper.toEntity(any())).thenCallRealMethod();
         when(userMapper.toEntity(any())).thenCallRealMethod();
         doReturn(expectedSavedReadingMediaDto).when(readingMangaService).save(any());
 
-        // WHEN
+        // When
         ReadingMangaDto savedReadingMediaDto = readingMangaService.addMangaToReadingList(userDto, readingMangaDto);
 
+        // Then
         assertThat(savedReadingMediaDto).isEqualTo(expectedSavedReadingMediaDto);
-
         verify(mangaService).createManga(readingMangaDto.getManga());
         verify(readingMangaMapper).toEntity(any());
         verify(userMapper).toEntity(any());

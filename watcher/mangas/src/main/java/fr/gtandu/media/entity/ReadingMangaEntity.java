@@ -19,7 +19,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reading_mangas")
+@SequenceGenerator(name = "reading_mangas_seq", sequenceName = "reading_mangas_seq", allocationSize = 1)
 public class ReadingMangaEntity extends ReadingMediaEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reading_mangas_seq")
+    private Long id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manga_id")
     private MangaEntity manga;

@@ -13,7 +13,7 @@ public class JwtMapper {
                 .email(principal.getClaim("email"))
                 .firstName(principal.getClaim("given_name"))
                 .lastName(principal.getClaim("family_name"))
-                .username(principal.getClaim("username"))
+                .username(principal.getClaim("preferred_username"))
                 .build();
     }
 }
